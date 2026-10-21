@@ -88,4 +88,5 @@ if('IntersectionObserver'in window){const io=new IntersectionObserver(entries=>e
 const heroImg=document.querySelector('[data-parallax]');
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches){window.addEventListener('scroll',()=>{const r=heroImg.parentElement.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight){heroImg.style.transform='translateY('+Math.max(-22,Math.min(22,(r.top/innerHeight)*-20))+'px) scale(1.08)'}},{passive:true})}
 </script>
-</body></html><script async data-explicit-opt-in="true" data-deployment-id="dpl_EbgSpoURFd2ZFXd4jx9tPXvQc9Vf" src="https://vercel.live/_next-live/feedback/feedback.js"></script>
+</body>
+</html>
