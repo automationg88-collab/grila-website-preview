@@ -14,6 +14,18 @@
 - Do not reconnect Vercel or create Vercel deployments/projects. Continue from the existing GitHub repository and its current `main` branch.
 - Keep one canonical website version; do not create competing branches or copies just to preview a change.
 
+## Execution lessons and failure prevention
+
+These are mandatory operating rules learned from recent failures; follow them before making further changes.
+
+1. **Respect tool exclusions as hard constraints.** Never use Vercel for this project. Before any tool call, check that the tool and proposed action are within the user's current hosting and access constraints.
+2. **Inspect before changing.** Recover the latest repository state and current handoff/instructions first. Identify the exact failing layer and collect evidence (workflow run status, job status, steps/logs, workflow YAML, Pages configuration/deployment status, and public response) before editing configuration.
+3. **Do not confuse a queued job with a code failure.** A `queued` run with no steps executed is not evidence that the website code or deployment steps failed. Check runner availability/scheduling, concurrency, environment protection, and recent runs before selecting a fix.
+4. **Do not change workflow protections speculatively.** Removing an environment gate, changing permissions, or altering deployment configuration requires evidence that it is the actual blocker and that the change is necessary. Prefer a targeted, reversible fix; preserve security and recovery paths.
+5. **A commit is not a deployment.** Verify the intended commit was published by GitHub Pages, then inspect the public HTML/assets and interact with the actual page. Do not claim success based only on a commit, a queued run, or a deployment request.
+6. **Finish the inspection-to-fix loop.** After each change, check the result, test the actual user-facing behavior and relevant regressions, record what passed/failed, and continue to the next blocker. Avoid repetitive progress-only updates; report a blocker only after the relevant diagnostic checks and state the next concrete action.
+7. **Maintain evidence labels.** Mark facts as VERIFIED only when directly confirmed by an identifiable tool result or test. Keep hypotheses labelled as hypotheses; never present plausible causes as established root causes.
+
 ## Current implementation
 
 - Static, responsive website with bundled local installation photos.
