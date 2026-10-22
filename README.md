@@ -8,6 +8,12 @@
 - For substantial changes, use a short-lived branch from `main`, run the release checklist, merge after validation, then retire the temporary branch. Never maintain competing website versions.
 - Do not use old standalone HTML/ZIP snapshots as alternate implementations. Reuse a design idea only by deliberately incorporating and testing it in the canonical site.
 
+## Hosting and tool constraints
+
+- **Use GitHub and GitHub Pages for this website project. Do not use Vercel.** The user disconnected from Vercel and has explicitly instructed that it must not be used for website work, deployments, previews, troubleshooting, or recommendations.
+- Do not reconnect Vercel or create Vercel deployments/projects. Continue from the existing GitHub repository and its current `main` branch.
+- Keep one canonical website version; do not create competing branches or copies just to preview a change.
+
 ## Current implementation
 
 - Static, responsive website with bundled local installation photos.
