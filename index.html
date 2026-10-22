@@ -39,7 +39,7 @@
     <div class="sim-controls reveal">
       <div class="sim-control-top"><span class="sim-overline">YOUR LIGHT, YOUR WAY</span><span class="sim-live-dot" aria-hidden="true"></span></div>
       <label for="blind-range">Blind position</label>
-      <div class="range-ends"><span>0% · Light</span><span>100% · Dark</span></div>
+      <div class="range-ends"><span>0% · Fully open</span><span>100% · Fully closed</span></div>
       <input id="blind-range" type="range" min="0" max="100" step="1" value="0" aria-describedby="sim-help">
       <p id="sim-help" class="sim-help">Slide to change the blind position. This is a visual preview, not a photometric measurement.</p>
       <div class="sim-readouts" aria-live="polite" aria-atomic="true"><div><span>DAYLIGHT</span><strong id="sim-daylight-label">Bright</strong></div><div><span>PRIVACY</span><strong id="sim-privacy-label">Open</strong></div></div>
@@ -77,7 +77,7 @@ function updateBlind(){
   simScene.style.setProperty('--room-dim',dim.toFixed(3));
   simScene.style.setProperty('--daylight',daylight.toFixed(3));
   simScene.style.setProperty('--rail-opacity',closed>1?'1':'0');
-  simPercent.textContent=closed+'% '+(closed===0?'OPEN':closed===100?'CLOSED':'CLOSED');
+  simPercent.textContent=closed+'% '+(closed===0?'OPEN':'CLOSED');
   daylightLabel.textContent=closed>=82?'Dark':closed>=55?'Dim':closed>=25?'Soft':'Bright';
   privacyLabel.textContent=closed>=82?'Full':closed>=55?'High':closed>=25?'Partial':'Open';
   blindRange.setAttribute('aria-valuetext',closed+' percent closed; daylight '+daylightLabel.textContent.toLowerCase()+', privacy '+privacyLabel.textContent.toLowerCase());
