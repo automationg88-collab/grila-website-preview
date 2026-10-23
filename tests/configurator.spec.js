@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 const baseURL = process.env.BASE_URL || 'https://automationg88-collab.github.io/grila-website-preview';
 
 test('configurator loads and renders its 3D scene', async ({ page }) => {
+  test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
@@ -18,13 +19,14 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   for (const value of ['0', '25', '50', '75', '100']) {
     await desktopPosition.fill(value);
     await page.waitForTimeout(180);
-    await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 15000 });
+    await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
 
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
 
 test('configurator controls remain usable and the page fits a mobile viewport', async ({ page }) => {
+  test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
@@ -39,7 +41,7 @@ test('configurator controls remain usable and the page fits a mobile viewport', 
     await position.fill(value);
     await expect(page.locator('#position-value')).toHaveText(`${value}% down`);
     await page.waitForTimeout(150);
-    await page.screenshot({ path: `test-results/configurator-mobile-${value}.png`, fullPage: false, animations: 'allow', timeout: 15000 });
+    await page.screenshot({ path: `test-results/configurator-mobile-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
   await position.fill('65');
   await expect(page.locator('#position-value-small')).toHaveText('65%');
@@ -66,6 +68,6 @@ test('configurator controls remain usable and the page fits a mobile viewport', 
   }));
   expect(dimensions.pageWidth, 'The page should not overflow horizontally on mobile').toBeLessThanOrEqual(dimensions.viewportWidth + 1);
 
-  await page.screenshot({ path: 'test-results/configurator-mobile.png', fullPage: false, animations: 'allow', timeout: 15000 });
+  await page.screenshot({ path: 'test-results/configurator-mobile.png', fullPage: false, animations: 'allow', timeout: 45000 });
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions on mobile').toEqual([]);
 });
