@@ -35,7 +35,7 @@ const canvas=document.getElementById('view');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 const scene=new THREE.Scene();scene.background=new THREE.Color('#d7e0df');scene.fog=new THREE.Fog('#d7e0df',12,24);
-const camera=new THREE.PerspectiveCamera(36,canvas.clientWidth/canvas.clientHeight,.1,100);camera.position.set(0.3,1.1,8.6);
+const camera=new THREE.PerspectiveCamera(36,canvas.clientWidth/canvas.clientHeight,.1,100);camera.position.set(0.3,1.1,8.6);camera.lookAt(0,.25,0);
 scene.add(new THREE.HemisphereLight(0xf4f5f0,0x777b75,2.1));
 const key=new THREE.DirectionalLight(0xffedcf,3.1);key.position.set(-3.5,6,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-5;key.shadow.camera.right=5;key.shadow.camera.top=5;key.shadow.camera.bottom=-5;scene.add(key);
 const fill=new THREE.DirectionalLight(0xd6e9ff,1.25);fill.position.set(4,2,4);scene.add(fill);
@@ -64,7 +64,7 @@ function clearFabric(){while(fabricGroup.children.length){const c=fabricGroup.ch
 function rebuildFabric(){clearFabric();const type='roller';
 const w=win.w-.16,h=win.h-.15,top=win.cy+win.h/2-.04,z=win.z+.17;
 blindMaterial.color.set(document.querySelector('[data-color][aria-pressed=true]').dataset.color);
-const op=Number(document.getElementById('opacity').value);blindMaterial.opacity=Math.max(.14,Math.min(.99,.22+op*.0077));blindMaterial.roughness=type==='venetian'?.55:.91;
+const op=Number(document.getElementById('opacity').value);blindMaterial.opacity=Math.max(.14,Math.min(.99,.48+op*.0051));blindMaterial.roughness=type==='venetian'?.55:.91;
 if(type==='venetian'){const count=26,sh=Math.max(.045,h/count*.55);for(let i=0;i<count;i++){const sl=box(w,sh,.045,blindMaterial,0,top-(i+.5)*(h/count),z);sl.userData.baseY=top-(i+.5)*(h/count);sl.userData.index=i;fabricGroup.add(sl);slats.push(sl)}}else{
 const geo=new THREE.PlaneGeometry(w,h,1,32);fabricMesh=new THREE.Mesh(geo,blindMaterial);fabricMesh.position.set(0,top-h/2,z);fabricMesh.castShadow=true;fabricMesh.receiveShadow=true;fabricGroup.add(fabricMesh);
 if(type==='zebra'){const count=12;for(let i=0;i<count;i++){const stripe=box(w,.09,.012,i%2?new THREE.MeshStandardMaterial({color:'#f4f0e7',transparent:true,opacity:.72}):new THREE.MeshStandardMaterial({color:'#777e7b',transparent:true,opacity:.18}),0,top-(i+.5)*(h/count),z+.012,false);fabricGroup.add(stripe);stripe.userData.stripe=true}}
@@ -87,7 +87,7 @@ document.getElementById('position').addEventListener('input',()=>{updateBlind();
 let drag=false,px=0,py=0,theta=0,phi=0;canvas.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointercancel',()=>drag=false);canvas.addEventListener('pointermove',e=>{if(!drag)return;theta+=(e.clientX-px)*.008;phi=Math.max(-.2,Math.min(.35,phi+(e.clientY-py)*.004));px=e.clientX;py=e.clientY;camera.position.x=Math.sin(theta)*8.6;camera.position.y=1.1+phi*5;camera.position.z=Math.cos(theta)*8.6;camera.lookAt(0,.15,0);renderer.render(scene,camera)});
 canvas.addEventListener('wheel',e=>{e.preventDefault();camera.position.z=Math.max(5.5,Math.min(11,camera.position.z+e.deltaY*.008));camera.lookAt(0,.15,0);renderer.render(scene,camera)},{passive:false});
 function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.render(scene,camera)}
-window.addEventListener('resize',resize);rebuildFabric();applyDimensions();updateSummary();updateBlind();
+window.addEventListener('resize',resize);rebuildFabric();applyDimensions();updateSummary();updateBlind();requestAnimationFrame(resize);setTimeout(resize,120);
 const animate=()=>{requestAnimationFrame(animate);renderer.render(scene,camera)};animate();
 }catch(err){statusBox.classList.add('show');statusBox.textContent='The 3D preview could not start in this browser. Try a current version of Chrome with WebGL enabled.';document.getElementById('view-status').textContent='PREVIEW UNAVAILABLE';console.error(err)}
 </script>
