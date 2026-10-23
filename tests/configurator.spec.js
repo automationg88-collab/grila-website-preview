@@ -29,6 +29,19 @@ test('configurator controls remain usable and the page fits a mobile viewport', 
   expect(response.status()).toBe(200);
   await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30000 });
 
+  const position = page.locator('#position');
+  await position.fill('0');
+  await expect(page.locator('#position-value')).toHaveText('0% down');
+  await position.fill('100');
+  await expect(page.locator('#position-value')).toHaveText('100% down');
+  await position.fill('65');
+  await expect(page.locator('#position-value-small')).toHaveText('65%');
+
+  await page.getByRole('button', { name: 'Blackout' }).click();
+  await expect(page.locator('#opacity-label')).toHaveText('Blackout');
+  await page.getByRole('button', { name: 'Linen' }).click();
+  await expect(page.getByRole('button', { name: 'Linen' })).toHaveAttribute('aria-pressed', 'true');
+
   const rangeInputs = page.locator('input[type="range"]');
   const rangeCount = await rangeInputs.count();
   for (let i = 0; i < rangeCount; i++) {
