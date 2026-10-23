@@ -14,7 +14,12 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   await expect(page.locator('canvas').first(), 'A rendered canvas should exist for the 3D scene').toBeVisible({ timeout: 30000 });
   await page.waitForTimeout(1500);
 
-  await page.screenshot({ path: 'test-results/configurator-desktop.png', fullPage: true, animations: 'disabled' });
+  const desktopPosition = page.locator('#position');
+  for (const value of ['0', '25', '50', '75', '100']) {
+    await desktopPosition.fill(value);
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: true, animations: 'disabled' });
+  }
 
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
@@ -30,10 +35,12 @@ test('configurator controls remain usable and the page fits a mobile viewport', 
   await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30000 });
 
   const position = page.locator('#position');
-  await position.fill('0');
-  await expect(page.locator('#position-value')).toHaveText('0% down');
-  await position.fill('100');
-  await expect(page.locator('#position-value')).toHaveText('100% down');
+  for (const value of ['0', '50', '100']) {
+    await position.fill(value);
+    await expect(page.locator('#position-value')).toHaveText(`${value}% down`);
+    await page.waitForTimeout(150);
+    await page.screenshot({ path: `test-results/configurator-mobile-${value}.png`, fullPage: true, animations: 'disabled' });
+  }
   await position.fill('65');
   await expect(page.locator('#position-value-small')).toHaveText('65%');
 
