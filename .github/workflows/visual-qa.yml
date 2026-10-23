@@ -30,13 +30,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: package-lock.json
 
-      - name: Install project dependencies
-        run: npm ci
+      - name: Install Playwright test runner
+        run: npm install --no-save --no-audit --no-fund @playwright/test
 
-      - name: Install Chromium
+      - name: Install Chromium and OS dependencies
         run: npx playwright install --with-deps chromium
 
       - name: Test deployed configurator
