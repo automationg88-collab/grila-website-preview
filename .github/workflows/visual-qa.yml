@@ -1,0 +1,53 @@
+name: Configurator browser QA
+
+on:
+  workflow_run:
+    workflows: ["Deploy Grila preview to GitHub Pages"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "23 6 * * 1"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: configurator-browser-qa
+  cancel-in-progress: true
+
+jobs:
+  browser-qa:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out test definitions
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Test deployed configurator
+        env:
+          BASE_URL: https://automationg88-collab.github.io/grila-website-preview
+        run: npx playwright test
+
+      - name: Upload browser screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: configurator-browser-qa
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14
