@@ -74,15 +74,49 @@ const cassetteFace=box(win.w+.105,.105,.018,cassetteFaceMat,0,win.cy+win.h/2+.13
 const cassetteSeam=box(win.w+.09,.009,.02,machinedMat,0,win.cy+win.h/2+.075,win.z+.28);
 const cassetteLip=box(win.w+.1,.018,.17,cassetteMat,0,win.cy+win.h/2+.055,win.z+.205);
 const outletShadow=box(win.w-.08,.018,.04,rubberMat,0,win.cy+win.h/2+.045,win.z+.285);
-// End brackets are made from a back plate and a short forward-projecting support at each end.
+// Reusable mounting hardware. Scale is illustrative: the plate is estimated at palm-size
+// (about 90 x 70 mm) until a direct measurement is supplied. The 30 mm tube diameter is the
+// only confirmed mechanical dimension. Each assembly is grouped independently for later tuning.
 const brackets=[];
-for(const side of [-1,1]){
- const x=side*(win.w/2-.005), y=win.cy+win.h/2+.1;
- const plate=box(.105,.16,.018,machinedMat,x,y,win.z+.205);
- const foot=box(.105,.018,.105,cassetteMat,x,y-.071,win.z+.245);
- const cheek=new THREE.Mesh(new THREE.CylinderGeometry(.068,.068,.018,40),machinedMat);cheek.rotation.z=Math.PI/2;cheek.position.set(x,y,win.z+.255);cheek.castShadow=true;scene.add(cheek);
- brackets.push(plate,foot,cheek);
+const hardwareGroups={motorMount:new THREE.Group(),idlerMount:new THREE.Group()};
+hardwareGroups.motorMount.name='motor-side-mounting-plate-and-interface';
+hardwareGroups.idlerMount.name='opposite-side-end-bracket';
+scene.add(hardwareGroups.motorMount,hardwareGroups.idlerMount);
+const plateMat=new THREE.MeshStandardMaterial({color:'#c9c8c2',metalness:.42,roughness:.48});
+const plateEdgeMat=new THREE.MeshStandardMaterial({color:'#9c9e99',metalness:.52,roughness:.36});
+const insetMat=new THREE.MeshStandardMaterial({color:'#454946',metalness:.18,roughness:.68});
+const adapterMat=new THREE.MeshStandardMaterial({color:'#777c78',metalness:.68,roughness:.3});
+function addMountingPlate(group,x,y,z,motorSide){
+ const plateW=.205,plateH=.16,plateD=.018; // ~91 x 71 mm at the current illustrative scene scale
+ const plate=new THREE.Mesh(new THREE.BoxGeometry(plateW,plateH,plateD),plateMat);
+ plate.position.set(x,y,z);plate.castShadow=true;plate.receiveShadow=true;group.add(plate);brackets.push(plate);
+ // Four shallow dark screw-seat details are separate meshes, not painted marks.
+ const holeGeo=new THREE.CylinderGeometry(.009,.009,.003,24);
+ for(const [dx,dy] of [[-.067,.047],[.067,.047],[-.067,-.047],[.067,-.047]]){
+  const hole=new THREE.Mesh(holeGeo,insetMat);hole.rotation.x=Math.PI/2;hole.position.set(x+dx,y+dy,z+plateD/2+.0015);group.add(hole);brackets.push(hole);
+ }
+ const flange=new THREE.Mesh(new THREE.BoxGeometry(plateW*.78,.018,.09),plateEdgeMat);
+ flange.position.set(x,y-plateH/2+.009,z+.045);flange.castShadow=true;group.add(flange);brackets.push(flange);
+ if(motorSide){
+  // Separate stepped adapter: ring and hub remain independently editable.
+  const ring=new THREE.Mesh(new THREE.CylinderGeometry(.052,.052,.018,40),adapterMat);
+  ring.rotation.z=Math.PI/2;ring.position.set(x,y,z+.038);ring.castShadow=true;group.add(ring);brackets.push(ring);
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(.032,.032,.035,32),insetMat);
+  hub.rotation.z=Math.PI/2;hub.position.set(x,y,z+.052);hub.castShadow=true;group.add(hub);brackets.push(hub);
+  const center=new THREE.Mesh(new THREE.CylinderGeometry(.014,.014,.038,24),plateEdgeMat);
+  center.rotation.z=Math.PI/2;center.position.set(x,y,z+.057);group.add(center);brackets.push(center);
+ }else{
+  // Opposite end: a separate idler support and circular bearing seat.
+  const bearing=new THREE.Mesh(new THREE.CylinderGeometry(.041,.041,.018,36),plateEdgeMat);
+  bearing.rotation.z=Math.PI/2;bearing.position.set(x,y,z+.032);bearing.castShadow=true;group.add(bearing);brackets.push(bearing);
+  const socket=new THREE.Mesh(new THREE.CylinderGeometry(.022,.022,.024,32),insetMat);
+  socket.rotation.z=Math.PI/2;socket.position.set(x,y,z+.045);group.add(socket);brackets.push(socket);
+ }
+ return group;
 }
+const mountY=win.cy+win.h/2+.1;
+addMountingPlate(hardwareGroups.motorMount,-(win.w/2-.005),mountY,win.z+.205,true);
+addMountingPlate(hardwareGroups.idlerMount,win.w/2-.005,mountY,win.z+.205,false);
 const tubeMat=new THREE.MeshStandardMaterial({color:'#7c7169',metalness:.68,roughness:.3});
 const tube=new THREE.Mesh(new THREE.CylinderGeometry(.05625,.05625,win.w-.12,64),tubeMat);tube.rotation.z=Math.PI/2;tube.position.set(0,win.cy+win.h/2+.06,win.z+.24);tube.castShadow=true;scene.add(tube);
 const endCapMat=new THREE.MeshStandardMaterial({color:'#858b88',metalness:.72,roughness:.24});const endCaps=[-1,1].map(side=>{const cap=new THREE.Mesh(new THREE.CylinderGeometry(.061,.061,.035,40),endCapMat);cap.rotation.z=Math.PI/2;cap.position.set(side*(win.w/2+.012),tube.position.y,tube.position.z);cap.castShadow=true;scene.add(cap);return cap;});
