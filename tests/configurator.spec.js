@@ -26,7 +26,6 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
     await desktopPosition.fill(value);
     await page.waitForTimeout(180);
     sceneHeights[value] = (await page.evaluate(() => window.__configuratorState())).fabricHeight;
-    await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
 
   const loweredScene = await page.evaluate(() => window.__configuratorState());
@@ -62,6 +61,14 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(resizedScene.beadRadius).toBe(recoloredScene.beadRadius);
   expect(resizedScene.chainBeadSpacing).toBeGreaterThan(0);
   expect(Math.abs(((resizedScene.chainMinX + resizedScene.chainMaxX) / 2) - resizedScene.clutchX)).toBeLessThan(0.02);
+
+  await desktopPosition.fill('65');
+  await page.waitForTimeout(180);
+  for (const value of ['0', '25', '50', '75', '100']) {
+    await desktopPosition.fill(value);
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
+  }
 
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
