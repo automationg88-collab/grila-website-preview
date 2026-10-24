@@ -67,15 +67,28 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(resizedScene.chainBeadSpacing).toBeGreaterThan(0);
   expect(Math.abs(((resizedScene.chainMinX + resizedScene.chainMaxX) / 2) - resizedScene.clutchX)).toBeLessThan(0.02);
 
-  await setPosition('65');
-  await page.waitForTimeout(180);
+  expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
+});
+
+test('configurator captures desktop position screenshots', async ({ page }) => {
+  test.setTimeout(120000);
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+
+  const response = await page.goto(`${baseURL}/configurator.html`, { waitUntil: 'networkidle', timeout: 60000 });
+  expect(response).not.toBeNull();
+  expect(response.status()).toBe(200);
+  await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30000 });
+  await page.waitForTimeout(1500);
+
+  const desktopPosition = page.locator('#position');
   for (const value of ['0', '25', '50', '75', '100']) {
-    await setPosition(value);
+    await desktopPosition.fill(value);
     await page.waitForTimeout(180);
     await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
 
-  expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
+  expect(pageErrors, 'The screenshot page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
 
 test('configurator controls remain usable and the page fits a mobile viewport', async ({ page }) => {
