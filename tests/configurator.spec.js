@@ -60,7 +60,7 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   await page.waitForTimeout(180);
   const resizedScene = await page.evaluate(() => window.__configuratorState());
   expect(resizedScene.beadRadius).toBe(recoloredScene.beadRadius);
-  expect(resizedScene.beadSpacing).toBeGreaterThan(0);
+  expect(resizedScene.chainBeadSpacing).toBeGreaterThan(0);
   expect(Math.abs(((resizedScene.chainMinX + resizedScene.chainMaxX) / 2) - resizedScene.clutchX)).toBeLessThan(0.02);
 
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
