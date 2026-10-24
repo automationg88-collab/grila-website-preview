@@ -19,6 +19,25 @@
 .chapter{padding:0 var(--pad) clamp(100px,15vw,190px)}.chapter-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:clamp(28px,7vw,100px);align-items:center}.chapter-grid.reverse{grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr)}.chapter-grid.reverse .visual{order:2}.visual{height:clamp(340px,55vw,680px)}.visual img{object-position:center}.chapter-copy{padding:18px 0;max-width:420px}.chapter-no{font-size:10px;letter-spacing:.16em;color:var(--blue)}.chapter-copy h2{font-size:clamp(38px,5.2vw,72px);line-height:.98;margin:22px 0}.chapter-copy p{font-size:13px;line-height:1.9;color:var(--muted);margin:0;max-width:360px}.caption{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#61727d;margin-top:18px}
 .statement{background:var(--blue);color:#eef2f4;padding:clamp(90px,14vw,175px) var(--pad)}.statement .eyebrow{color:#b9d0dd}.statement h2{font-size:clamp(48px,8.5vw,118px);line-height:.95;max-width:1100px;margin:28px 0 42px}.statement h2 em{color:#b9d0dd}.statement-foot{display:flex;justify-content:space-between;align-items:end;gap:24px}.statement-foot p{font-size:12px;line-height:1.8;color:#d0dce3;max-width:360px;margin:0}.cta{display:inline-flex;border:1px solid #e9edf0;border-radius:99px;padding:14px 18px;font-size:11px;gap:22px;white-space:nowrap;transition:background .2s,color .2s}.cta:hover{background:#e9edf0;color:var(--blue)}
 footer{padding:24px var(--pad) 32px;display:flex;justify-content:space-between;gap:20px;font-size:10px;color:#64737c;letter-spacing:.04em}
+
+/* Scroll-controlled product story */
+.scroll-film{position:relative;height:280vh;background:#14232e;color:#eef2f4}
+.film-sticky{position:sticky;top:0;height:100svh;min-height:520px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);align-items:center;padding:clamp(20px,5vw,76px);gap:clamp(24px,5vw,70px)}
+.film-visual{position:relative;height:min(68vh,680px);min-height:300px;overflow:hidden;background:#273c4a}
+.film-shot{position:absolute;inset:0;opacity:0;transform:scale(1.12);transition:opacity .25s linear;will-change:opacity,transform}
+.film-shot img{width:100%;height:100%;object-fit:cover;display:block}
+.film-shot.active{opacity:1}
+.film-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,35,46,.08),transparent 55%,rgba(20,35,46,.18));pointer-events:none}
+.film-copy{position:relative;z-index:2;max-width:420px}
+.film-kicker{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a9c4d3}
+.film-copy h2{font-size:clamp(42px,5.5vw,76px);line-height:.95;margin:22px 0;letter-spacing:-.04em}
+.film-copy p{font-size:13px;line-height:1.9;color:#c4d3dc;max-width:330px}
+.film-count{font-size:10px;letter-spacing:.15em;color:#a9c4d3;margin-top:34px;display:flex;align-items:center;gap:12px}
+.film-track{height:2px;background:rgba(255,255,255,.2);width:100%;max-width:180px;overflow:hidden}
+.film-track span{height:100%;width:0;display:block;background:#dce8ee}
+.film-hint{position:absolute;bottom:22px;left:clamp(20px,5vw,76px);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#a9c4d3}
+@media(max-width:700px){.scroll-film{height:250vh}.film-sticky{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;align-content:center;gap:18px;padding:18px 20px 48px}.film-visual{height:48svh;min-height:260px;max-height:500px}.film-copy h2{font-size:clamp(38px,10vw,58px);margin:12px 0}.film-copy p{font-size:12px;line-height:1.65;margin:0}.film-count{margin-top:15px}.film-hint{bottom:16px;left:20px}}
+@media(prefers-reduced-motion:reduce){.film-shot{transition:none}}
 .reveal{opacity:1;transform:none}.js .reveal{opacity:0;transform:translateY(24px)}.js .reveal.visible{opacity:1;transform:translateY(0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}.js .reveal.delay{transition-delay:.12s}
 @media(max-width:700px){.top{height:66px}.hero{padding-top:68px}.hero-foot{align-items:start;flex-direction:column;gap:18px}.intro{grid-template-columns:1fr;gap:28px}.chapter-grid,.chapter-grid.reverse{grid-template-columns:1fr;gap:24px}.chapter-grid.reverse .visual{order:0}.visual{height:clamp(320px,110vw,560px)}.chapter{padding-bottom:92px}.statement-foot{align-items:start;flex-direction:column}footer{flex-direction:column}.hero-frame{margin:0 var(--pad);height:clamp(310px,100vw,520px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}.js .reveal{opacity:1;transform:none}}
@@ -42,6 +61,25 @@ footer{padding:24px var(--pad) 32px;display:flex;justify-content:space-between;g
 <img src="assets/grila-1vwPK4cDmBFDLn6VYIbe-BsEj4LBX_dsG-cropped.jpg" alt="Grila roller blind product reference" fetchpriority="high">
 <span class="frame-label">01 — The complete product</span>
 </div>
+
+<section class="scroll-film" id="product-film" aria-label="Scroll-controlled Grila product story">
+ <div class="film-sticky">
+  <div class="film-visual" aria-label="Product photography sequence">
+   <div class="film-shot active"><img src="assets/grila-1vwPK4cDmBFDLn6VYIbe-BsEj4LBX_dsG-cropped.jpg" alt="Grila roller blind overall view"></div>
+   <div class="film-shot"><img src="assets/grila-11PI-uyIRkYlvSzd-9w4gD19kP83vsa4r.jpg" alt="Grila product detail"></div>
+   <div class="film-shot"><img src="assets/grila-1R70w4awoMbCw4KGhLWOf8YIAUVVBQouV.jpg" alt="Grila hardware and finish detail"></div>
+   <div class="film-shot"><img src="assets/simulator-scene-clean.webp" alt="Roller blind in an interior setting"></div>
+   <div class="film-shade"></div>
+  </div>
+  <div class="film-copy" aria-live="polite">
+   <div class="film-kicker" id="film-kicker">01 / THE COMPLETE PRODUCT</div>
+   <h2 id="film-title">A considered form.</h2>
+   <p id="film-description">Start with the complete silhouette, then move closer to the details that define the finish.</p>
+   <div class="film-count"><span id="film-step">01 — 04</span><span class="film-track"><span id="film-progress"></span></span></div>
+  </div>
+  <div class="film-hint">Continue scrolling to explore ↓</div>
+ </div>
+</section>
 <section class="intro">
 <h2 class="reveal">Designed to feel quiet.<br><em>Built around the details.</em></h2>
 <div class="reveal delay"><p>Explore the real product through its form, finish and components. This first visual story uses Grila's existing photography, keeping the focus on the product instead of inventing mechanical details.</p><p>Scroll to take a closer look.</p><div class="rule"></div></div>
@@ -73,7 +111,40 @@ footer{padding:24px var(--pad) 32px;display:flex;justify-content:space-between;g
 <footer><span>GRILA — ROLLERS & ACCESSORIES</span><span>Product story · Built from existing photography</span><a href="index.html">Return to Grila ↗</a></footer>
 <script>
 document.documentElement.classList.add('js');
+
 const items=[...document.querySelectorAll('.reveal')];
+const film=document.querySelector('#product-film');
+const shots=[...document.querySelectorAll('.film-shot')];
+const filmData=[
+ {k:'01 / THE COMPLETE PRODUCT',t:'A considered form.',d:'Start with the complete silhouette, then move closer to the details that define the finish.'},
+ {k:'02 / MATERIAL & FINISH',t:'Texture in focus.',d:'A closer photographic view brings the product surface and its finish into focus.'},
+ {k:'03 / HARDWARE DETAILS',t:'Made to work together.',d:'Explore the hardware from the available product photography. Hidden geometry is not simulated.'},
+ {k:'04 / IN YOUR SPACE',t:'Light, shaped for living.',d:'See the blind in an interior setting, then continue to configure your options.'}
+];
+let activeFilm=-1;
+function updateFilm(){
+ if(!film||!shots.length)return;
+ const rect=film.getBoundingClientRect();
+ const travel=Math.max(1,film.offsetHeight-window.innerHeight);
+ const progress=Math.max(0,Math.min(1,-rect.top/travel));
+ const index=Math.min(shots.length-1,Math.floor(progress*shots.length));
+ if(index!==activeFilm){
+  activeFilm=index;
+  shots.forEach((s,i)=>{s.classList.toggle('active',i===index);s.style.transform=i===index?'scale(1.02)':'scale(1.12)'});
+  const data=filmData[index];
+  document.querySelector('#film-kicker').textContent=data.k;
+  document.querySelector('#film-title').textContent=data.t;
+  document.querySelector('#film-description').textContent=data.d;
+  document.querySelector('#film-step').textContent=String(index+1).padStart(2,'0')+' — 04';
+ }
+ document.querySelector('#film-progress').style.width=(progress*100)+'%';
+ const current=shots[index];
+ current.style.transform='scale('+(1.12-progress*.1)+')';
+}
+let filmTick=false;
+window.addEventListener('scroll',()=>{if(!filmTick){requestAnimationFrame(()=>{updateFilm();filmTick=false});filmTick=true}},{passive:true});
+window.addEventListener('resize',updateFilm);
+updateFilm();
 if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches){
  const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}},{threshold:.12,rootMargin:'0px 0px -4% 0px'});
  items.forEach(item=>observer.observe(item));
