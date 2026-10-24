@@ -17,6 +17,8 @@ test('screen roller configurator loads and renders its 3D scene', async ({ page 
 
   await expect.poll(() => page.evaluate(() => typeof window.__configuratorState === 'function')).toBe(true);
   const initialScene = await page.evaluate(() => window.__configuratorState());
+  await expect(page.locator('#summary')).toHaveText('Motorised screen roller · Linen');
+  await expect(page.locator('#summary-details')).toContainText('140 × 180 cm');
   expect(initialScene.fabricMode).toBe('screen');
   expect(initialScene.stripeCount).toBe(0);
   expect(initialScene.fabricVisible).toBe(true);
@@ -48,6 +50,7 @@ test('screen roller configurator loads and renders its 3D scene', async ({ page 
   await setPosition('65');
   const restoredScene = await page.evaluate(() => window.__configuratorState());
   expect(restoredScene.fabricVisible).toBe(true);
+  await expect(page.locator('#summary-details')).toContainText('65% down');
 
   await page.locator('button[data-color="#b8b5ab"]').evaluate(button => button.click());
   const recoloredScene = await page.evaluate(() => window.__configuratorState());
