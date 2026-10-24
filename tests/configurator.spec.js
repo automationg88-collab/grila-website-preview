@@ -53,6 +53,9 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   const recoloredScene = await page.evaluate(() => window.__configuratorState());
   expect(recoloredScene.fabricColor).toBe('b8b5ab');
   expect(recoloredScene.fabricColor).not.toBe(initialScene.fabricColor);
+  expect(recoloredScene.renderedMaterialColor).toBe('b8b5ab');
+  expect(recoloredScene.renderedStripeColors).toContain('b8b5ab');
+  expect(recoloredScene.renderedStripeColors).not.toEqual(initialScene.renderedStripeColors);
   expect(recoloredScene.beadRadius).toBeLessThan(0.015);
   const chainCenter = (recoloredScene.chainMinX + recoloredScene.chainMaxX) / 2;
   expect(Math.abs(chainCenter - recoloredScene.clutchX)).toBeLessThan(0.02);
