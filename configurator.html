@@ -84,7 +84,7 @@ for(const side of [-1,1]){
  brackets.push(plate,foot,cheek);
 }
 const tubeMat=new THREE.MeshStandardMaterial({color:'#9ba19d',metalness:.78,roughness:.23});
-const tube=new THREE.Mesh(new THREE.CylinderGeometry(.032,.032,win.w-.12,64),tubeMat);tube.rotation.z=Math.PI/2;tube.position.set(0,win.cy+win.h/2+.06,win.z+.24);tube.castShadow=true;scene.add(tube);
+const tube=new THREE.Mesh(new THREE.CylinderGeometry(.05625,.05625,win.w-.12,64),tubeMat);tube.rotation.z=Math.PI/2;tube.position.set(0,win.cy+win.h/2+.06,win.z+.24);tube.castShadow=true;scene.add(tube);
 const endCapMat=new THREE.MeshStandardMaterial({color:'#858b88',metalness:.72,roughness:.24});const endCaps=[-1,1].map(side=>{const cap=new THREE.Mesh(new THREE.CylinderGeometry(.061,.061,.035,40),endCapMat);cap.rotation.z=Math.PI/2;cap.position.set(side*(win.w/2+.012),tube.position.y,tube.position.z);cap.castShadow=true;scene.add(cap);return cap;});
 const chainGroup=new THREE.Group();scene.add(chainGroup);const chainBeads=[];let chainMinX=0,chainMaxX=0,chainBeadSpacing=0;const chainMat=new THREE.MeshStandardMaterial({color:'#f5f4ef',roughness:.38,metalness:0});const beadGeo=new THREE.SphereGeometry(.0105,16,12);for(let i=0;i<64;i++){const bead=new THREE.Mesh(beadGeo,chainMat);bead.castShadow=true;chainGroup.add(bead);chainBeads.push(bead)}const clutch=new THREE.Mesh(new THREE.CylinderGeometry(.073,.073,.045,32),endCapMat);clutch.rotation.x=Math.PI/2;clutch.castShadow=true;scene.add(clutch);function updateChain(pos){
 const r=.055,centerX=win.w/2+.02,leftX=centerX-r,rightX=centerX+r;
