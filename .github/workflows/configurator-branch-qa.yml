@@ -1,0 +1,68 @@
+name: Configurator branch browser QA
+
+on:
+  push:
+    branches: [fix/configurator-scale-scope, feature/configurator-premium-polish]
+    paths:
+      - '.github/workflows/configurator-branch-qa.yml'
+      - 'configurator.html'
+      - 'playwright.config.js'
+      - 'tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: configurator-branch-browser-qa
+  cancel-in-progress: false
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright test runner
+        run: npm install --no-save --no-audit --no-fund @playwright/test
+
+      - name: Install Chromium and OS dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Serve branch files locally
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/grila-http.log 2>&1 &
+          echo $! > /tmp/grila-http.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/configurator.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/grila-http.log
+          exit 1
+
+      - name: Test fix branch in Chromium
+        env:
+          BASE_URL: http://127.0.0.1:4173
+        run: npx playwright test
+
+      - name: Upload browser screenshots, traces, and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: configurator-branch-browser-qa
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14

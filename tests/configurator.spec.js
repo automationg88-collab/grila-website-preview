@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 const baseURL = process.env.BASE_URL || 'https://automationg88-collab.github.io/grila-website-preview';
 
-test('configurator loads and renders its 3D scene', async ({ page }) => {
+test('screen roller configurator loads and renders its 3D scene', async ({ page }) => {
   test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
@@ -15,6 +15,80 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   await expect(page.locator('canvas').first(), 'A rendered canvas should exist for the 3D scene').toBeVisible({ timeout: 30000 });
   await page.waitForTimeout(1500);
 
+  await expect.poll(() => page.evaluate(() => typeof window.__configuratorState === 'function')).toBe(true);
+  const initialScene = await page.evaluate(() => window.__configuratorState());
+  await expect(page.locator('#summary')).toHaveText('Motorised screen roller · Linen');
+  await expect(page.locator('#summary-details')).toContainText('140 × 180 cm');
+  expect(initialScene.fabricMode).toBe('screen');
+  expect(initialScene.stripeCount).toBe(0);
+  expect(initialScene.fabricVisible).toBe(true);
+  expect(initialScene.fabricHeight).toBeGreaterThan(0);
+
+  const desktopPosition = page.locator('#position');
+  const setPosition = value => page.evaluate(value => {
+    const input = document.getElementById('position');
+    input.value = String(value);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }, value);
+  const sceneHeights = {};
+  for (const value of ['0', '25', '50', '75', '100']) {
+    await setPosition(value);
+    await page.waitForTimeout(180);
+    sceneHeights[value] = (await page.evaluate(() => window.__configuratorState())).fabricHeight;
+  }
+
+  const loweredScene = await page.evaluate(() => window.__configuratorState());
+  expect(sceneHeights['0']).toBe(0);
+  expect(sceneHeights['50']).toBeGreaterThan(sceneHeights['0']);
+  expect(sceneHeights['50']).toBeLessThan(sceneHeights['100']);
+  expect(sceneHeights['100']).toBeGreaterThan(initialScene.fabricHeight);
+  expect(loweredScene.fabricHeight).toBeGreaterThan(initialScene.fabricHeight);
+  expect(loweredScene.position).toBe(100);
+  await setPosition('0');
+  const raisedScene = await page.evaluate(() => window.__configuratorState());
+  expect(raisedScene.fabricVisible).toBe(false);
+  await setPosition('65');
+  const restoredScene = await page.evaluate(() => window.__configuratorState());
+  expect(restoredScene.fabricVisible).toBe(true);
+  await expect(page.locator('#summary-details')).toContainText('65% down');
+
+  await page.locator('button[data-color="#b8b5ab"]').evaluate(button => button.click());
+  const recoloredScene = await page.evaluate(() => window.__configuratorState());
+  expect(recoloredScene.fabricColor).toBe('b8b5ab');
+  expect(recoloredScene.fabricColor).not.toBe(initialScene.fabricColor);
+  expect(recoloredScene.renderedMaterialColor).toBe('b8b5ab');
+  expect(recoloredScene.renderedStripeColor).toBe('b8b5ab');
+  expect(recoloredScene.renderedStripeColor).not.toBe(initialScene.renderedStripeColor);
+  expect(recoloredScene.beadRadius).toBeLessThan(0.015);
+  const chainCenter = (recoloredScene.chainMinX + recoloredScene.chainMaxX) / 2;
+  expect(Math.abs(chainCenter - recoloredScene.clutchX)).toBeLessThan(0.02);
+
+  await page.locator('details summary').click();
+  await page.evaluate(() => {
+    document.querySelector('#width').value = '240';
+    document.querySelector('#height').value = '260';
+    document.querySelector('#height').dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.waitForTimeout(180);
+  const resizedScene = await page.evaluate(() => window.__configuratorState());
+  expect(resizedScene.beadRadius).toBe(recoloredScene.beadRadius);
+  expect(resizedScene.chainBeadSpacing).toBeGreaterThan(0);
+  expect(Math.abs(((resizedScene.chainMinX + resizedScene.chainMaxX) / 2) - resizedScene.clutchX)).toBeLessThan(0.02);
+
+  expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
+});
+
+test('configurator captures desktop position screenshots', async ({ page }) => {
+  test.setTimeout(120000);
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+
+  const response = await page.goto(`${baseURL}/configurator.html`, { waitUntil: 'networkidle', timeout: 60000 });
+  expect(response).not.toBeNull();
+  expect(response.status()).toBe(200);
+  await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30000 });
+  await page.waitForTimeout(1500);
+
   const desktopPosition = page.locator('#position');
   for (const value of ['0', '25', '50', '75', '100']) {
     await desktopPosition.fill(value);
@@ -22,7 +96,7 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
     await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
 
-  expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
+  expect(pageErrors, 'The screenshot page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
 
 test('configurator controls remain usable and the page fits a mobile viewport', async ({ page }) => {
