@@ -21,14 +21,20 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(initialScene.fabricHeight).toBeGreaterThan(0);
 
   const desktopPosition = page.locator('#position');
+  const sceneHeights = {};
   for (const value of ['0', '25', '50', '75', '100']) {
     await desktopPosition.fill(value);
     await page.waitForTimeout(180);
+    sceneHeights[value] = (await page.evaluate(() => window.__configuratorState())).fabricHeight;
     await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
 
   const loweredScene = await page.evaluate(() => window.__configuratorState());
-  expect(loweredScene.fabricHeight).toBeLessThan(initialScene.fabricHeight);
+  expect(sceneHeights['0']).toBe(0);
+  expect(sceneHeights['50']).toBeGreaterThan(sceneHeights['0']);
+  expect(sceneHeights['50']).toBeLessThan(sceneHeights['100']);
+  expect(sceneHeights['100']).toBeGreaterThan(initialScene.fabricHeight);
+  expect(loweredScene.fabricHeight).toBeGreaterThan(initialScene.fabricHeight);
   expect(loweredScene.position).toBe(100);
   await desktopPosition.fill('0');
   const raisedScene = await page.evaluate(() => window.__configuratorState());
@@ -44,6 +50,16 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(recoloredScene.beadRadius).toBeLessThan(0.015);
   const chainCenter = (recoloredScene.chainMinX + recoloredScene.chainMaxX) / 2;
   expect(Math.abs(chainCenter - recoloredScene.clutchX)).toBeLessThan(0.02);
+
+  await page.locator('details summary').click();
+  await page.locator('#width').fill('240');
+  await page.locator('#height').fill('260');
+  await page.locator('#height').press('Tab');
+  await page.waitForTimeout(180);
+  const resizedScene = await page.evaluate(() => window.__configuratorState());
+  expect(resizedScene.beadRadius).toBe(recoloredScene.beadRadius);
+  expect(resizedScene.beadSpacing).toBeGreaterThan(0);
+  expect(Math.abs(((resizedScene.chainMinX + resizedScene.chainMaxX) / 2) - resizedScene.clutchX)).toBeLessThan(0.02);
 
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
