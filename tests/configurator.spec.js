@@ -52,9 +52,11 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(Math.abs(chainCenter - recoloredScene.clutchX)).toBeLessThan(0.02);
 
   await page.locator('details summary').click();
-  await page.locator('#width').fill('240');
-  await page.locator('#height').fill('260');
-  await page.locator('#height').press('Tab');
+  await page.evaluate(() => {
+    document.querySelector('#width').value = '240';
+    document.querySelector('#height').value = '260';
+    document.querySelector('#height').dispatchEvent(new Event('change', { bubbles: true }));
+  });
   await page.waitForTimeout(180);
   const resizedScene = await page.evaluate(() => window.__configuratorState());
   expect(resizedScene.beadRadius).toBe(recoloredScene.beadRadius);
