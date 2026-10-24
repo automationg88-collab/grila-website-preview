@@ -15,12 +15,35 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   await expect(page.locator('canvas').first(), 'A rendered canvas should exist for the 3D scene').toBeVisible({ timeout: 30000 });
   await page.waitForTimeout(1500);
 
+  await expect.poll(() => page.evaluate(() => typeof window.__configuratorState === 'function')).toBe(true);
+  const initialScene = await page.evaluate(() => window.__configuratorState());
+  expect(initialScene.fabricVisible).toBe(true);
+  expect(initialScene.fabricHeight).toBeGreaterThan(0);
+
   const desktopPosition = page.locator('#position');
   for (const value of ['0', '25', '50', '75', '100']) {
     await desktopPosition.fill(value);
     await page.waitForTimeout(180);
     await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
+
+  const loweredScene = await page.evaluate(() => window.__configuratorState());
+  expect(loweredScene.fabricHeight).toBeLessThan(initialScene.fabricHeight);
+  expect(loweredScene.position).toBe(100);
+  await desktopPosition.fill('0');
+  const raisedScene = await page.evaluate(() => window.__configuratorState());
+  expect(raisedScene.fabricVisible).toBe(false);
+  await desktopPosition.fill('65');
+  const restoredScene = await page.evaluate(() => window.__configuratorState());
+  expect(restoredScene.fabricVisible).toBe(true);
+
+  await page.getByRole('button', { name: 'Stone' }).click();
+  const recoloredScene = await page.evaluate(() => window.__configuratorState());
+  expect(recoloredScene.fabricColor).toBe('b8b5ab');
+  expect(recoloredScene.fabricColor).not.toBe(initialScene.fabricColor);
+  expect(recoloredScene.beadRadius).toBeLessThan(0.015);
+  const chainCenter = (recoloredScene.chainMinX + recoloredScene.chainMaxX) / 2;
+  expect(Math.abs(chainCenter - recoloredScene.clutchX)).toBeLessThan(0.02);
 
   expect(pageErrors, 'The page should not throw uncaught JavaScript exceptions').toEqual([]);
 });
