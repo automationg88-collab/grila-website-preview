@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 const baseURL = process.env.BASE_URL || 'https://automationg88-collab.github.io/grila-website-preview';
 
-test('configurator loads and renders its 3D scene', async ({ page }) => {
+test('screen roller configurator loads and renders its 3D scene', async ({ page }) => {
   test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
@@ -17,8 +17,8 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
 
   await expect.poll(() => page.evaluate(() => typeof window.__configuratorState === 'function')).toBe(true);
   const initialScene = await page.evaluate(() => window.__configuratorState());
-  expect(initialScene.fabricMode).toBe('zebra');
-  expect(initialScene.stripeCount).toBe(10);
+  expect(initialScene.fabricMode).toBe('screen');
+  expect(initialScene.stripeCount).toBe(0);
   expect(initialScene.fabricVisible).toBe(true);
   expect(initialScene.fabricHeight).toBeGreaterThan(0);
 
