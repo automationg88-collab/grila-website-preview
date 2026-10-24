@@ -1,0 +1,30 @@
+name: 3D asset manifest QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/3d/**'
+      - 'scripts/validate-asset-manifest.py'
+      - '.github/workflows/asset-manifest-qa.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/3d/**'
+      - 'scripts/validate-asset-manifest.py'
+      - '.github/workflows/asset-manifest-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate asset manifest and approved files
+        run: python scripts/validate-asset-manifest.py
