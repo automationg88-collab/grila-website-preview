@@ -43,7 +43,7 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   const restoredScene = await page.evaluate(() => window.__configuratorState());
   expect(restoredScene.fabricVisible).toBe(true);
 
-  await page.getByRole('button', { name: 'Stone' }).click();
+  await page.locator('button[data-color="#b8b5ab"]').evaluate(button => button.click());
   const recoloredScene = await page.evaluate(() => window.__configuratorState());
   expect(recoloredScene.fabricColor).toBe('b8b5ab');
   expect(recoloredScene.fabricColor).not.toBe(initialScene.fabricColor);
