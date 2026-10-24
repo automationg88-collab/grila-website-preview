@@ -17,6 +17,8 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
 
   await expect.poll(() => page.evaluate(() => typeof window.__configuratorState === 'function')).toBe(true);
   const initialScene = await page.evaluate(() => window.__configuratorState());
+  expect(initialScene.fabricMode).toBe('zebra');
+  expect(initialScene.stripeCount).toBe(10);
   expect(initialScene.fabricVisible).toBe(true);
   expect(initialScene.fabricHeight).toBeGreaterThan(0);
 
