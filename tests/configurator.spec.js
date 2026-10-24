@@ -17,7 +17,7 @@ test('screen roller configurator loads and renders its 3D scene', async ({ page 
 
   await expect.poll(() => page.evaluate(() => typeof window.__configuratorState === 'function')).toBe(true);
   const initialScene = await page.evaluate(() => window.__configuratorState());
-  await expect(page.locator('#summary')).toHaveText('Motorised screen roller · Linen');
+  await expect(page.locator('#summary')).toHaveText('Motorised screen roller · Warm taupe');
   await expect(page.locator('#summary-details')).toContainText('140 × 180 cm');
   expect(initialScene.fabricMode).toBe('screen');
   expect(initialScene.stripeCount).toBe(0);
@@ -122,7 +122,7 @@ test('configurator controls remain usable and the page fits a mobile viewport', 
 
   await page.getByRole('button', { name: 'Blackout' }).click();
   await expect(page.locator('#opacity-label')).toHaveText('Blackout');
-  await page.getByRole('button', { name: 'Linen' }).click();
+  await page.getByRole('button', { name: 'Warm taupe' }).click();
   await expect(page.getByRole('button', { name: 'Linen' })).toHaveAttribute('aria-pressed', 'true');
 
   const rangeInputs = page.locator('input[type="range"]');
