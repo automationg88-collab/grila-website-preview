@@ -123,7 +123,7 @@ test('configurator controls remain usable and the page fits a mobile viewport', 
   await page.getByRole('button', { name: 'Blackout' }).click();
   await expect(page.locator('#opacity-label')).toHaveText('Blackout');
   await page.getByRole('button', { name: 'Warm taupe' }).click();
-  await expect(page.getByRole('button', { name: 'Linen' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Warm taupe' })).toHaveAttribute('aria-pressed', 'true');
 
   const rangeInputs = page.locator('input[type="range"]');
   const rangeCount = await rangeInputs.count();
