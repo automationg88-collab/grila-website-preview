@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "project": "Grila Rollers & Accessories",
+  "units": "meters",
+  "confirmedDimensions": {
+    "rollerTubeDiameter": {
+      "value": 0.03,
+      "unit": "m",
+      "source": "user-confirmed"
+    }
+  },
+  "estimatedDimensions": {
+    "mountingPlate": {
+      "note": "Approximately average adult palm size; estimate only until measured against real part."
+    }
+  },
+  "qualityPolicy": {
+    "noInventedGeometry": true,
+    "referenceRequiredForApproval": true,
+    "approvedAssetsMustExist": true,
+    "formats": [
+      "glb"
+    ],
+    "mobileBudget": "Optimize GLB geometry, textures and file size before website use."
+  },
+  "components": [
+    {
+      "id": "bead-chain-drive",
+      "label": "Bead-chain drive / clutch",
+      "status": "candidate-reported-not-reviewed",
+      "asset": null,
+      "notes": "User reports AI-generated model exists and looks acceptable; file is not yet present in this repository, so geometry, dimensions, materials and web compatibility are unverified."
+    },
+    {
+      "id": "roller-tube",
+      "label": "Roller tube",
+      "status": "not-created",
+      "asset": null,
+      "notes": "Diameter must remain exactly 0.03 m."
+    },
+    {
+      "id": "bottom-rail",
+      "label": "Bottom rail",
+      "status": "not-validated",
+      "asset": null,
+      "notes": "Must be a separately modeled component and visibly present in the final assembly."
+    },
+    {
+      "id": "mounting-plate",
+      "label": "Mounting plate",
+      "status": "not-validated",
+      "asset": null,
+      "notes": "Separate component; palm-size is an estimate, not a verified dimension."
+    },
+    {
+      "id": "motor-interface",
+      "label": "Motor interface",
+      "status": "not-validated",
+      "asset": null,
+      "notes": "Separate from mounting plate and roller tube."
+    },
+    {
+      "id": "opposite-bracket",
+      "label": "Opposite-side bracket",
+      "status": "not-validated",
+      "asset": null,
+      "notes": "Separate component; confirm geometry from references."
+    },
+    {
+      "id": "fabric",
+      "label": "Screen fabric",
+      "status": "not-created",
+      "asset": null,
+      "notes": "Use real product photography/texture references; appearance must be validated against actual fabric."
+    }
+  ]
+}
