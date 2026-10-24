@@ -12,6 +12,14 @@ details{border-top:1px solid var(--line);padding:12px 0}details summary{cursor:p
 <div class="app">
 <section class="visual" aria-label="Interactive three-dimensional product preview">
 <div class="visual-top"><span class="pill">GRILA / CONFIGURATOR 01</span><span class="pill" id="view-status">3D PREVIEW</span></div>
+<div id="preview-fallback" aria-hidden="true" style="display:none;position:absolute;inset:0;overflow:hidden;background:linear-gradient(145deg,#e5e8e5,#cbd5d5)">
+<div style="position:absolute;inset:7% 13% 9%;border:12px solid #f7f5ef;box-shadow:0 2px 9px #7c858455;background:linear-gradient(180deg,#b8c9c4,#e4e5dc);">
+<div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(65,55,47,.13) 0 1px,rgba(255,255,255,.12) 1px 4px);opacity:.85"></div>
+<div style="position:absolute;left:-3%;right:-3%;top:-7%;height:8%;background:linear-gradient(#7e7167,#574e48);border-radius:3px;box-shadow:0 3px 6px #4b4b4438"></div>
+<div style="position:absolute;left:2%;right:2%;top:0;bottom:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.15) 0 1px,rgba(94,79,66,.13) 1px 3px),#9c9084;opacity:.84"></div>
+<div style="position:absolute;left:-2%;right:-2%;bottom:-2%;height:13px;background:linear-gradient(#d6d0c6,#71675f);border-radius:12px;box-shadow:0 3px 5px #4b4b4438"></div>
+</div><div style="position:absolute;left:0;right:0;bottom:3%;text-align:center;font:10px Arial,sans-serif;letter-spacing:.12em;color:#44545a">STATIC PRODUCT PREVIEW</div>
+</div>
 <canvas id="view" aria-label="Three-dimensional window and blind preview"></canvas>
 <div class="view-help">DRAG TO ORBIT · SCROLL TO ZOOM</div><button class="story-toggle" id="explode-toggle" type="button" aria-pressed="false">Explore assembly</button><div class="story-caption" id="story-caption">Mechanism view</div><div class="status" id="status" role="status"></div>
 </section>
@@ -178,6 +186,6 @@ function updateHero(now){const t=Math.min(1,(now-heroStart)/2600),ease=1-Math.po
 function tweenExploded(target){const from=explodedProgress,start=performance.now();const duration=760;function tick(now){const t=Math.min(1,(now-start)/duration),ease=1-Math.pow(1-t,3);setExplodedProgress(from+(target-from)*ease);renderer.render(scene,camera);if(t<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 explodeToggle.addEventListener('click',()=>{const next=explodedProgress<.5?1:0;explodeToggle.setAttribute('aria-pressed',String(next===1));explodeToggle.textContent=next===1?'Close assembly':'Explore assembly';storyCaption.textContent=next===1?'Mechanism view':'Hero view';tweenExploded(next)});
 const animate=()=>{if(!heroComplete){requestAnimationFrame(animate);updateHero(performance.now());renderer.render(scene,camera)}};animate();
-}catch(err){statusBox.classList.add('show');statusBox.textContent='The 3D preview could not start in this browser. Try a current version of Chrome with WebGL enabled.';document.getElementById('view-status').textContent='PREVIEW UNAVAILABLE';console.error(err)}
+}catch(err){statusBox.classList.add('show');statusBox.textContent='Interactive 3D is unavailable in this browser. Showing a static product preview instead.';document.getElementById('view-status').textContent='STATIC PREVIEW';const fallback=document.getElementById('preview-fallback');if(fallback)fallback.style.display='block';canvas.style.display='none';console.error('Grila 3D preview failed:',err)}
 </script>
 </body></html>
