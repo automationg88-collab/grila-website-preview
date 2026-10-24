@@ -20,13 +20,27 @@
 </div></section>
 <section class="end"><div><div class="eyebrow">Continue exploring</div><h2>Configure the blind for your space.</h2><p class="note">Note: the current model is a procedural 3D concept, not a verified CAD replica of every internal component.</p></div><a class="cta" href="configurator.html">Open configurator ↗</a></section>
 <script>
-const film=document.querySelector('#film'),frame=document.querySelector('#model'),stages=[
-{k:'01 / COMPLETE BLIND',t:'The complete assembly.',d:'Begin with the assembled roller blind. Continue scrolling to separate the mechanism and inspect its arrangement.',exploded:false},
-{k:'02 / COMPONENT REVEAL',t:'Separate the assembly.',d:'The 3D model moves into its exploded view, revealing the current model’s tube, fabric, rail and modeled hardware.',exploded:true},
-{k:'03 / INSPECT THE MODEL',t:'Explore the parts in 3D.',d:'Drag inside the viewer to rotate the model. Scroll a little further to return toward the assembled view.',exploded:true},
-{k:'04 / BACK TOGETHER',t:'One complete system.',d:'The sequence closes on the assembled product. Open the configurator to change fabric, dimensions and blind position.',exploded:false}
-];let current=-1,requested=null;
-function setStage(i){if(i===current)return;current=i;const s=stages[i];document.querySelector('#kicker').textContent=s.k;document.querySelector('#title').textContent=s.t;document.querySelector('#desc').textContent=s.d;document.querySelector('#count').textContent=String(i+1).padStart(2,'0')+' — 04';document.querySelector('#progress').style.width=((i+1)/4*100)+'%';try{const d=frame.contentDocument;const b=d&&d.querySelector('#explode-toggle');if(b&&Boolean(b.getAttribute('aria-pressed')==='true')!==s.exploded)b.click()}catch(e){}}
-function update(){const r=film.getBoundingClientRect(),travel=Math.max(1,film.offsetHeight-innerHeight),p=Math.max(0,Math.min(.9999,-r.top/travel));setStage(Math.min(3,Math.floor(p*4)));}let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{update();queued=false})}},{passive:true});addEventListener('resize',update);frame.addEventListener('load',()=>{setTimeout(update,500)});update();
+const film=document.querySelector('#film'),frame=document.querySelector('#model');
+const stages=[
+{k:'01 / COMPLETE BLIND',t:'The complete assembly.',d:'Start with the finished roller blind. Keep scrolling and watch its components move apart in 3D.',p:0},
+{k:'02 / MECHANISM REVEAL',t:'The parts open up.',d:'The mounting hardware, roller tube, fabric and bottom rail separate progressively as you scroll.',p:.42},
+{k:'03 / EXPLODED VIEW',t:'Every layer, revealed.',d:'Continue scrolling to open the assembly fully. Drag inside the viewer to inspect the model from another angle.',p:1},
+{k:'04 / REASSEMBLY',t:'Everything returns.',d:'Scroll onward and the components move back into their assembled position.',p:0}
+];
+let current=-1,lastProgress=-1,queued=false;
+function sendProgress(progress){if(!frame.contentWindow)return;frame.contentWindow.postMessage({type:'grila-explode-progress',progress},location.origin)}
+function update(){
+ const r=film.getBoundingClientRect(),travel=Math.max(1,film.offsetHeight-innerHeight);
+ const p=Math.max(0,Math.min(1,-r.top/travel));
+ // Reveal from 0 to 1 through the central portion, then reassemble near the end.
+ const explode=Math.max(0,Math.min(1,(p-.08)/.62));
+ const progress=p>.76?Math.max(0,1-(p-.76)/.2):explode;
+ if(Math.abs(progress-lastProgress)>.003){sendProgress(progress);lastProgress=progress}
+ const idx=p<.25?0:p<.62?1:p<.82?2:3;
+ if(idx!==current){current=idx;const s=stages[idx];document.querySelector('#kicker').textContent=s.k;document.querySelector('#title').textContent=s.t;document.querySelector('#desc').textContent=s.d;document.querySelector('#count').textContent=String(idx+1).padStart(2,'0')+' — 04';document.querySelector('#progress').style.width=(p*100)+'%'}
+}
+function scheduleUpdate(){if(!queued){queued=true;requestAnimationFrame(()=>{update();queued=false})}}
+addEventListener('scroll',scheduleUpdate,{passive:true});addEventListener('resize',scheduleUpdate);
+frame.addEventListener('load',()=>{lastProgress=-1;update()});update();
 </script>
 </body></html>
