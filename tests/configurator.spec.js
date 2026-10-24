@@ -21,9 +21,14 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(initialScene.fabricHeight).toBeGreaterThan(0);
 
   const desktopPosition = page.locator('#position');
+  const setPosition = value => page.evaluate(value => {
+    const input = document.getElementById('position');
+    input.value = String(value);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }, value);
   const sceneHeights = {};
   for (const value of ['0', '25', '50', '75', '100']) {
-    await desktopPosition.fill(value);
+    await setPosition(value);
     await page.waitForTimeout(180);
     sceneHeights[value] = (await page.evaluate(() => window.__configuratorState())).fabricHeight;
   }
@@ -35,10 +40,10 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(sceneHeights['100']).toBeGreaterThan(initialScene.fabricHeight);
   expect(loweredScene.fabricHeight).toBeGreaterThan(initialScene.fabricHeight);
   expect(loweredScene.position).toBe(100);
-  await desktopPosition.fill('0');
+  await setPosition('0');
   const raisedScene = await page.evaluate(() => window.__configuratorState());
   expect(raisedScene.fabricVisible).toBe(false);
-  await desktopPosition.fill('65');
+  await setPosition('65');
   const restoredScene = await page.evaluate(() => window.__configuratorState());
   expect(restoredScene.fabricVisible).toBe(true);
 
@@ -62,10 +67,10 @@ test('configurator loads and renders its 3D scene', async ({ page }) => {
   expect(resizedScene.chainBeadSpacing).toBeGreaterThan(0);
   expect(Math.abs(((resizedScene.chainMinX + resizedScene.chainMaxX) / 2) - resizedScene.clutchX)).toBeLessThan(0.02);
 
-  await desktopPosition.fill('65');
+  await setPosition('65');
   await page.waitForTimeout(180);
   for (const value of ['0', '25', '50', '75', '100']) {
-    await desktopPosition.fill(value);
+    await setPosition(value);
     await page.waitForTimeout(180);
     await page.screenshot({ path: `test-results/configurator-desktop-${value}.png`, fullPage: false, animations: 'allow', timeout: 45000 });
   }
