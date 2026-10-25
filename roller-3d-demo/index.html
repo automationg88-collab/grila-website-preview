@@ -1,18 +1,43 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GRILA | 3D Roller Blind</title><style>*{box-sizing:border-box}body{margin:0;background:#141516;color:#f3eee6;font:15px system-ui}header{position:absolute;top:20px;left:24px;z-index:2}h1{font-size:20px;margin:0}small{color:#b8afa4}canvas{display:block}aside{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:#22262be8;border:1px solid #555;padding:14px;border-radius:16px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:center;width:min(96%,690px)}button{background:#b89a78;border:0;padding:10px 13px;border-radius:9px;color:#151515;font-weight:700}input{flex:1;min-width:130px}#status{font-size:12px;color:#ddd}@media(max-width:500px){header{top:12px;left:12px}aside{bottom:8px;padding:10px}}</style></head><body><header><h1>GRILA / ROLLER SYSTEM</h1><small>3D component reveal · concept model · tube Ø30 mm</small></header><aside><button id="play">Play</button><button id="pause">Pause</button><button id="assemble">Assemble</button><button id="reset">Reset camera</button><input id="progress" type="range" min="0" max="100" value="0" aria-label="Explosion progress"><span id="status">0%</span></aside><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script><div id="error" role="alert" style="display:none;position:absolute;top:75px;left:16px;right:16px;padding:12px;background:#652b2b;color:white;z-index:10;border-radius:8px"></div><script>window.addEventListener("error",e=>{const n=document.getElementById("error");n.style.display="block";n.textContent="3D loading error: "+e.message});window.addEventListener("unhandledrejection",e=>{const n=document.getElementById("error");n.style.display="block";n.textContent="3D loading error: "+e.reason})</script><div id="loading3d" style="position:absolute;top:120px;left:18px;right:18px;text-align:center;color:#ead8c1;z-index:2;pointer-events:none">Loading 3D model…</div><script>setTimeout(()=>{if(!window.GRILA_3D_READY){document.getElementById("loading3d").textContent="3D engine did not load. External Three.js modules may be blocked by this browser or network. Try opening in Chrome or Safari directly.";document.getElementById("loading3d").style.color="#ffb7a8"}},9000)</script><script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x17191b);const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.01,100);camera.position.set(1.8,1.05,2.75);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x202326);const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.01,100);camera.position.set(1.8,1.05,2.75);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;document.body.append(renderer.domElement);
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.target.set(0,-.36,0);orbit.minDistance=1;orbit.maxDistance=6;orbit.update();
-scene.add(new THREE.HemisphereLight(0xffffff,0x58473a,2));const key=new THREE.DirectionalLight(0xffe5ca,3);key.position.set(-2,4,5);scene.add(key);const rim=new THREE.DirectionalLight(0xffffff,2);rim.position.set(2,2,-3);scene.add(rim);
-const metal=new THREE.MeshStandardMaterial({color:0x9c948d,metalness:.75,roughness:.28});const dark=new THREE.MeshStandardMaterial({color:0x32231b,metalness:.3,roughness:.4});const cloth=new THREE.MeshStandardMaterial({color:0x9a7b62,roughness:.96,side:THREE.DoubleSide});
+scene.add(new THREE.HemisphereLight(0xffffff,0x554c46,1.45));const key=new THREE.DirectionalLight(0xffe5ca,3);key.position.set(-2,4,5);key.castShadow=true;scene.add(key);const rim=new THREE.DirectionalLight(0xffffff,2);rim.position.set(2,2,-3);scene.add(rim);
+const metal=new THREE.MeshStandardMaterial({color:0xa6a9aa,metalness:.82,roughness:.24});const dark=new THREE.MeshStandardMaterial({color:0x33241d,metalness:.15,roughness:.38});const plastic=new THREE.MeshStandardMaterial({color:0x282522,metalness:.05,roughness:.58});const accent=new THREE.MeshStandardMaterial({color:0x887568,metalness:.35,roughness:.4});const cloth=new THREE.MeshStandardMaterial({color:0xc3aa93,roughness:.92,side:THREE.DoubleSide});
 const groups={tube:new THREE.Group(),fabric:new THREE.Group(),rail:new THREE.Group(),left:new THREE.Group(),right:new THREE.Group()};Object.values(groups).forEach(g=>scene.add(g));
-function add(g,geo,mat,x=0,y=0,z=0){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m}
-const width=1.35, radius=.015;const tube=add(groups.tube,new THREE.CylinderGeometry(radius,radius,width,40),metal);tube.rotation.z=Math.PI/2;
-const fabric=add(groups.fabric,new THREE.PlaneGeometry(width-.045,1.16,1,36),cloth,0,-.60,.016);fabric.rotation.y=0;
-const texture=document.createElement('canvas');texture.width=128;texture.height=128;const ctx=texture.getContext('2d');ctx.fillStyle='#9b7b60';ctx.fillRect(0,0,128,128);for(let i=0;i<128;i+=3){ctx.fillStyle=i%2?'#b39273':'#785d4b';ctx.fillRect(0,i,128,1)}for(let i=0;i<128;i+=5){ctx.fillStyle='#b09379';ctx.fillRect(i,0,1,128)}const tex=new THREE.CanvasTexture(texture);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(6,7);cloth.map=tex;cloth.needsUpdate=true;
-add(groups.rail,new THREE.BoxGeometry(width,.037,.042),dark,0,-1.19,.02);add(groups.rail,new THREE.BoxGeometry(width-.03,.007,.045),metal,0,-1.211,.02);
-for(const [side,sign] of [['left',-1],['right',1]]){add(groups[side],new THREE.CylinderGeometry(.022,.022,.018,32),dark,sign*(width/2+.01),0,0).rotation.z=Math.PI/2;add(groups[side],new THREE.BoxGeometry(.035,.075,.07),metal,sign*(width/2+.045),.015,0)}
+function add(g,geo,mat,x=0,y=0,z=0){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m}
+const width=1.35, radius=.015;
+// Hollow 30 mm aluminium extrusion with subtle concentric end faces.
+const shell=add(groups.tube,new THREE.CylinderGeometry(radius,radius,width,72,1,true),metal);shell.rotation.z=Math.PI/2;
+const bore=add(groups.tube,new THREE.CylinderGeometry(.0115,.0115,width-.002,64,1,true),dark);bore.rotation.z=Math.PI/2;
+for(const sign of [-1,1]){const lip=add(groups.tube,new THREE.RingGeometry(.0114,.015,64),metal,sign*width/2,0,0);lip.rotation.y=Math.PI/2;}
+// Subtle woven-polyester texture rather than thick graphic stripes.
+const texture=document.createElement('canvas');texture.width=512;texture.height=512;const ctx=texture.getContext('2d');ctx.fillStyle='#bda38c';ctx.fillRect(0,0,512,512);
+for(let y=0;y<512;y+=4){ctx.fillStyle=y%8===0?'rgba(65,44,31,.095)':'rgba(255,246,227,.12)';ctx.fillRect(0,y,512,1)}
+for(let x=0;x<512;x+=4){ctx.fillStyle=x%8===0?'rgba(74,48,35,.08)':'rgba(255,245,229,.09)';ctx.fillRect(x,0,1,512)}
+const tex=new THREE.CanvasTexture(texture);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2.8,3.5);tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());cloth.map=tex;cloth.needsUpdate=true;
+// Fabric exits tangentially from the rear of the roller, bends over the top and hangs vertically.
+const fabricWidth=width-.035, topY=.002, bottomY=-1.17, zFront=.017;
+const verts=[],uvs=[],indices=[];const rows=48;
+for(let i=0;i<=rows;i++){const t=i/rows;const y=topY+(bottomY-topY)*t;const z=zFront+(.005*Math.exp(-t*32));for(const x of [-fabricWidth/2,fabricWidth/2]){verts.push(x,y,z);uvs.push((x/fabricWidth)+.5,1-t)}if(i<rows){const a=2*i;indices.push(a,a+2,a+1,a+1,a+2,a+3)}}
+const fgeo=new THREE.BufferGeometry();fgeo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));fgeo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));fgeo.setIndex(indices);fgeo.computeVertexNormals();add(groups.fabric,fgeo,cloth);
+const roll=add(groups.fabric,new THREE.CylinderGeometry(.016,.016,fabricWidth,72,1,true,0,Math.PI*1.92),cloth,0,0,0);roll.rotation.z=Math.PI/2;
+// Weighted powder-coated bottom rail with rounded aluminium profile and discreet end plugs.
+const rail=add(groups.rail,new THREE.CylinderGeometry(.022,.022,fabricWidth+.006,12),dark,0,-1.19,.02);rail.rotation.z=Math.PI/2;rail.scale.z=.65;
+const seam=add(groups.rail,new THREE.BoxGeometry(fabricWidth,.007,.006),accent,0,-1.165,.037);
+for(const sign of [-1,1]){const plug=add(groups.rail,new THREE.CylinderGeometry(.020,.020,.009,12),plastic,sign*(fabricWidth/2+.007),-1.19,.02);plug.rotation.z=Math.PI/2}
+// Mechanism housings, circular bearing inserts, spindle and fixing brackets.
+for(const [side,sign] of [['left',-1],['right',1]]){
+const g=groups[side],x=sign*(width/2+.022);
+const cap=add(g,new THREE.CylinderGeometry(.029,.029,.018,48),plastic,x,0,0);cap.rotation.z=Math.PI/2;
+const ring=add(g,new THREE.TorusGeometry(.022,.003,8,48),accent,x+sign*.011,0,0);ring.rotation.y=Math.PI/2;
+const pin=add(g,new THREE.CylinderGeometry(.009,.009,.029,32),metal,x+sign*.019,0,0);pin.rotation.z=Math.PI/2;
+const bracket=add(g,new THREE.BoxGeometry(.027,.083,.075),metal,x+sign*.038,.018,-.013);
+const plate=add(g,new THREE.BoxGeometry(.042,.012,.094),metal,x+sign*.038,.063,-.013);
+for(const zz of [-.044,.018]){const hole=add(g,new THREE.CylinderGeometry(.005,.005,.013,16),plastic,x+sign*.038,.070,zz);hole.rotation.x=Math.PI/2}
+}
 const assembled=Object.fromEntries(Object.entries(groups).map(([k,g])=>[k,g.position.clone()]));const offsets={tube:[0,.26,-.18],fabric:[0,-.13,.38],rail:[0,-.4,.20],left:[-.45,.12,0],right:[.45,.12,0]};
 let p=0,playing=false,reverse=false,last=performance.now();const slider=document.getElementById('progress'),status=document.getElementById('status');
 function setProgress(v){p=Math.max(0,Math.min(1,v));for(const [k,g] of Object.entries(groups)){const o=offsets[k];g.position.copy(assembled[k]).add(new THREE.Vector3(o[0],o[1],o[2]).multiplyScalar(p))}slider.value=Math.round(p*100);status.textContent=Math.round(p*100)+'%'}
