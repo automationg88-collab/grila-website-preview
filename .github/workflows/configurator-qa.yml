@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'configurator.html'
-      - 'tests/**'
+      - 'tests/configurator.spec.js'
       - 'playwright.config.js'
       - '.github/workflows/configurator-qa.yml'
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run configurator browser tests
-        run: npx playwright test
+        run: npx playwright test tests/configurator.spec.js
       - name: Upload browser screenshots and report on failure
         if: failure()
         uses: actions/upload-artifact@v4
