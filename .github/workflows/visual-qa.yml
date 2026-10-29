@@ -1,12 +1,14 @@
-name: Configurator browser QA
+name: Homepage browser QA
 
 on:
-  push:
+  pull_request:
     branches: [main]
     paths:
-      - '.github/workflows/visual-qa.yml'
+      - 'index.html'
+      - 'assets/**'
+      - 'tests/homepage.spec.js'
       - 'playwright.config.js'
-      - 'tests/**'
+      - '.github/workflows/visual-qa.yml'
   workflow_run:
     workflows: ["Deploy Grila preview to GitHub Pages"]
     types: [completed]
@@ -20,7 +22,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: configurator-browser-qa
+  group: homepage-browser-qa
   cancel-in-progress: false
 
 jobs:
@@ -29,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Check out test definitions
+      - name: Check out source
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -43,16 +45,34 @@ jobs:
       - name: Install Chromium and OS dependencies
         run: npx playwright install --with-deps chromium
 
-      - name: Test deployed configurator
+      - name: Start local static server for pull-request tests
+        if: github.event_name == 'pull_request'
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory . >/tmp/grila-homepage-server.log 2>&1 &
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/grila-homepage-server.log
+          exit 1
+
+      - name: Test proposed homepage locally
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_URL: http://127.0.0.1:4173
+        run: npx playwright test tests/homepage.spec.js
+
+      - name: Test deployed homepage
+        if: github.event_name != 'pull_request'
         env:
           BASE_URL: https://automationg88-collab.github.io/grila-website-preview
-        run: npx playwright test
+        run: npx playwright test tests/homepage.spec.js
 
       - name: Upload browser screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: configurator-browser-qa
+          name: grila-homepage-browser-qa
           path: |
             test-results/
             playwright-report/
