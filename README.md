@@ -28,17 +28,17 @@ These are mandatory operating rules learned from recent failures; follow them be
 
 ## Current implementation
 
-- Static, responsive website with bundled local installation photos.
-- Interactive daylight/blind-position simulator. This is an illustrative preview, not a photometric measurement.
-- Enquiries go to the publicly listed business phone **+355 69 246 7968** or email **grila.rollers.accessories@gmail.com**. There is no server-backed contact form; do not describe it as one.
+- Static, responsive homepage with bundled local imagery, a product collection, an explanation of the approach and process, and direct contact calls to action.
+- The separate 3D configurator (`configurator.html`) and its assets remain in the repository but are intentionally not linked from the homepage while that scope is paused. Do not delete or modify those assets as part of homepage work.
+- Enquiries use the publicly listed business phone **+355 69 246 7968** or email **grila.rollers.accessories@gmail.com**. There is no server-backed contact form; do not describe it as one.
 
 ## Release checklist
 
-1. Confirm every local image loads and all in-page navigation targets resolve.
-2. Test the simulator at fully open, middle, and fully closed positions on desktop and mobile.
+1. Confirm every local homepage image loads and all in-page navigation targets resolve; confirm the homepage has no link to `configurator.html` while configurator work is paused.
+2. Test the mobile navigation, contact links, and product/approach/process journeys.
 3. Check narrow mobile layouts (including 320px), keyboard/focus access, reduced-motion behavior, and browser-console/network errors.
 4. Verify the phone and email links against the business's current public contact details. Do not use `hello@grila.al` unless its email service is configured and verified.
-5. Confirm the GitHub Actions build/deployment succeeds for the intended `main` commit.
-6. Open the public site after deployment and repeat the key browser checks.
+5. Confirm the GitHub Actions deployment and homepage browser QA succeed for the intended `main` commit.
+6. Open the public site after deployment and repeat the key browser checks. Run the separate configurator test suite only when configurator work is explicitly resumed.
 
 This repository is the website source of truth. Keep it simple: one canonical page, only referenced local assets, and no duplicate packaged implementations.
