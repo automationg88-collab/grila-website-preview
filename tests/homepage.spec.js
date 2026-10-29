@@ -11,7 +11,7 @@ test('homepage presents the core offer and keeps the 3D configurator off the hom
   expect(response.status(), 'Homepage should return HTTP 200').toBe(200);
   await expect(page).toHaveTitle('Grila — Light, controlled.');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(/Light,\s*controlled\./);
-  await expect(page.locator('#collection .product-card').count()).resolves.toBeGreaterThanOrEqual(2);
+  await expect(page.locator('#collection .product-card')).toHaveCount(2);
   await expect(page.locator('a[href*="configurator"]')).toHaveCount(0);
   await expect(page.locator('body')).not.toContainText(/interactive 3D preview|Your configuration|Configure blind type/i);
 
